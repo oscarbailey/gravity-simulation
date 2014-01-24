@@ -144,7 +144,7 @@ class PlanetControl:
     def reset(self):
         self.planets = []
         self.create(window.width/2,window.height/2,mass=1990000)
-        self.create(window.width/2, window.height/2 + 300, vx=30000)
+        self.create(window.width/2, window.height/2 + 300, vx=3000000, vy=0)
  
 addPlanet = False
 # In the form (x, y)
@@ -188,11 +188,16 @@ class GameState:
         # Create the planet controller
         self.control = PlanetControl()
         self.control.reset()
+        
+        self.keys = {"UP":False,"SPACE":False}
 
     # moves the player paddle based on keyboard input
     def handle_player(self, dt):
-        if keymap[pyglet.window.key.UP]:
+        if not keymap[pyglet.window.key.UP] and self.keys["UP"]:
             self.reset()
+            self.keys["UP"] = False
+        if keymap[pyglet.window.key.UP]:
+            self.keys["UP"] = True
         if keymap[pyglet.window.key.SPACE]:
             #states.append(PausedState())
             self.control.create(mousex, mousey)
@@ -213,8 +218,9 @@ class GameState:
         if addPlanet and not mdrag:
             newx = newPlanet[0]
             newy = newPlanet[1]
-            print self.control.scale
+            print (newx-mousex)*10000
             self.control.create(mousex, mousey, vx=(newx-mousex)*10000, vy=(newy-mousey)*10000)
+            
             addPlanet = False
  
     def update(self, dt):
